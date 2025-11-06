@@ -1,5 +1,15 @@
-//#include "C:/Wichtig/System/Static/Library/WindowEngine1.0.h"
+#if defined __linux__
 #include "/home/codeleaded/System/Static/Library/WindowEngine1.0.h"
+#elif defined _WINE
+#include "/home/codeleaded/System/Static/Library/WindowEngine1.0.h"
+#elif defined _WIN32
+#include "F:/home/codeleaded/System/Static/Library/WindowEngine1.0.h"
+#elif defined(__APPLE__)
+#error "Apple not supported!"
+#else
+#error "Platform not supported!"
+#endif
+
 #include "./Math3D.h"
 
 mesh meshCube;
@@ -176,10 +186,9 @@ void TexturedTriangle(	int x1, int y1, float u1, float v1, float w1,
 				tex_v = (1.0f - t) * tex_sv + t * tex_ev;
 				tex_w = (1.0f - t) * tex_sw + t * tex_ew;
 				if (tex_w > pDepthBuffer[i*GetWidth() + j]){
-					//Draw(j,i,Sprite_Sample(tex,tex_u / tex_w, tex_v / tex_w));
 					int subx = id % 16;
 					int suby = id / 16;
-					Draw(j,i,Sprite_SampleSub(tex,tex_u / tex_w, tex_v / tex_w,subx,suby,16,16));
+					Point_Render(WINDOW_STD_ARGS,(Vec2){ j,i },Sprite_SampleSub(tex,tex_u / tex_w, tex_v / tex_w,subx,suby,16,16));
 					pDepthBuffer[i*GetWidth() + j] = tex_w;
 				}
 				t += tstep;
@@ -230,7 +239,7 @@ void TexturedTriangle(	int x1, int y1, float u1, float v1, float w1,
 				{
 					int subx = id % 16;
 					int suby = id / 16;
-					Draw(j,i,Sprite_SampleSub(tex,tex_u / tex_w, tex_v / tex_w,subx,suby,16,16));
+					Point_Render(WINDOW_STD_ARGS,(Vec2){ j,i },Sprite_SampleSub(tex,tex_u / tex_w, tex_v / tex_w,subx,suby,16,16));
 					pDepthBuffer[i * GetWidth() + j] = tex_w;
 				}
 				t += tstep;
