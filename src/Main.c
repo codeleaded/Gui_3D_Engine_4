@@ -13,17 +13,17 @@
 #include "./Math3D.h"
 
 mesh meshCube;
-mat4x4 matProj;
-vec3d vCamera;
-vec3d vLookDir;
+M4x4D matProj;
+Vec3D vCamera;
+Vec3D vLookDir;
 float fYaw;
 float fTheta;
 
 Sprite sprTex1;
 float *pDepthBuffer;
 
-void MakeCube(vec3d p,vec3d d,Pixel c){
-	triangle tris[12] = {
+void MakeCube(Vec3D p,Vec3D d,Pixel c){
+	Tri3D tris[12] = {
 		// SOUTH
 		{ 0.0f, 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 0.0f, 1.0f,    1.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f,		1.0f, 0.0f, 1.0f, c}, 
 		{ 0.0f, 0.0f, 0.0f, 1.0f,    1.0f, 1.0f, 0.0f, 1.0f,    1.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f,		1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, c},
@@ -51,14 +51,14 @@ void MakeCube(vec3d p,vec3d d,Pixel c){
 
 	for(int i = 0;i<12;i++){
 		for(int j = 0;j<3;j++){
-			tris[i].p[j] = vec3d_Add(p,vec3d_Make(tris[i].p[j].x * d.x,tris[i].p[j].y * d.y,tris[i].p[j].z * d.z));
+			tris[i].p[j] = Vec3D_Add(p,Vec3D_Make(tris[i].p[j].x * d.x,tris[i].p[j].y * d.y,tris[i].p[j].z * d.z));
 		}
 		Vector_Push(&meshCube.tris,&tris[i]);
 	}
 }
 
-void MakePlane(vec3d p,vec3d d,int Plane,Pixel c){
-	triangle tris[12] = {
+void MakePlane(Vec3D p,Vec3D d,int Plane,Pixel c){
+	Tri3D tris[12] = {
 		// SOUTH
 		{ 0.0f, 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 0.0f, 1.0f,    1.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f,		1.0f, 0.0f, 1.0f, c}, 
 		{ 0.0f, 0.0f, 0.0f, 1.0f,    1.0f, 1.0f, 0.0f, 1.0f,    1.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f,		1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, c},
@@ -86,7 +86,7 @@ void MakePlane(vec3d p,vec3d d,int Plane,Pixel c){
 
 	for(int i = Plane*2;i<(Plane+1)*2;i++){
 		for(int j = 0;j<3;j++){
-			tris[i].p[j] = vec3d_Add(p,vec3d_Make(tris[i].p[j].x * d.x,tris[i].p[j].y * d.y,tris[i].p[j].z * d.z));
+			tris[i].p[j] = Vec3D_Add(p,Vec3D_Make(tris[i].p[j].x * d.x,tris[i].p[j].y * d.y,tris[i].p[j].z * d.z));
 		}
 		Vector_Push(&meshCube.tris,&tris[i]);
 	}
@@ -253,13 +253,13 @@ void Setup(AlxWindow* w){
 
 	meshCube = mesh_New();
 
-	MakeCube(vec3d_Make(0.0f,0.0f,0.0f),vec3d_Make(1.0f,1.0f,1.0f),WHITE);
-	MakeCube(vec3d_Make(0.0f,0.0f,1.0f),vec3d_Make(1.0f,1.0f,1.0f),WHITE);
-	MakeCube(vec3d_Make(1.0f,0.0f,0.0f),vec3d_Make(1.0f,1.0f,1.0f),WHITE);
-	MakeCube(vec3d_Make(1.0f,0.0f,1.0f),vec3d_Make(1.0f,1.0f,1.0f),WHITE);
+	MakeCube(Vec3D_Make(0.0f,0.0f,0.0f),Vec3D_Make(1.0f,1.0f,1.0f),WHITE);
+	MakeCube(Vec3D_Make(0.0f,0.0f,1.0f),Vec3D_Make(1.0f,1.0f,1.0f),WHITE);
+	MakeCube(Vec3D_Make(1.0f,0.0f,0.0f),Vec3D_Make(1.0f,1.0f,1.0f),WHITE);
+	MakeCube(Vec3D_Make(1.0f,0.0f,1.0f),Vec3D_Make(1.0f,1.0f,1.0f),WHITE);
 
-	vCamera = vec3d_Make(0.0f,0.0f,-4.0f);
-	vLookDir = vec3d_New();
+	vCamera = Vec3D_Make(0.0f,0.0f,-4.0f);
+	vLookDir = Vec3D_New();
 	fYaw = 0.0f;
 	fTheta = 0.0f;
 	
@@ -273,40 +273,40 @@ void Update(AlxWindow* w){
 	if (Stroke(ALX_KEY_DOWN).DOWN)
 		vCamera.y -= 8.0f * w->ElapsedTime;
 	
-	vec3d vForward = vec3d_Mul(vLookDir,8.0f * w->ElapsedTime);
+	Vec3D vForward = Vec3D_Mul(vLookDir,8.0f * w->ElapsedTime);
 	if (Stroke(ALX_KEY_W).DOWN)
-		vCamera = vec3d_Add(vCamera,vForward);
+		vCamera = Vec3D_Add(vCamera,vForward);
 	if (Stroke(ALX_KEY_S).DOWN)
-		vCamera = vec3d_Sub(vCamera,vForward);
+		vCamera = Vec3D_Sub(vCamera,vForward);
 	if (Stroke(ALX_KEY_A).DOWN)
 		fYaw -= 2.0f * w->ElapsedTime;
 	if (Stroke(ALX_KEY_D).DOWN)
 		fYaw += 2.0f * w->ElapsedTime;
 	
 	fTheta += 1.0f * w->ElapsedTime;
-	mat4x4 matRotZ = Matrix_MakeRotationZ(fTheta * 0.5f);
-	mat4x4 matRotX = Matrix_MakeRotationX(fTheta);
+	M4x4D matRotZ = Matrix_MakeRotationZ(fTheta * 0.5f);
+	M4x4D matRotX = Matrix_MakeRotationX(fTheta);
 	
-	mat4x4 matTrans = Matrix_MakeTranslation(0.0f,0.0f,0.0f);
+	M4x4D matTrans = Matrix_MakeTranslation(0.0f,0.0f,0.0f);
 	
-	mat4x4 matWorld = Matrix_MakeIdentity();
+	M4x4D matWorld = Matrix_MakeIdentity();
 	matWorld = Matrix_MultiplyMatrix(matRotZ, matRotX);
 	matWorld = Matrix_MultiplyMatrix(matWorld, matTrans);
 	
-	vec3d vUp = vec3d_Make(0.0f,1.0f,0.0f);
-	vec3d vTarget = vec3d_Make(0.0f,0.0f,1.0f);
+	Vec3D vUp = Vec3D_Make(0.0f,1.0f,0.0f);
+	Vec3D vTarget = Vec3D_Make(0.0f,0.0f,1.0f);
 	
-	mat4x4 matCameraRot = Matrix_MakeRotationY(fYaw);
+	M4x4D matCameraRot = Matrix_MakeRotationY(fYaw);
 	vLookDir = Matrix_MultiplyVector(matCameraRot,vTarget);
 	
-	mat4x4 matCamera = Matrix_PointAt(vCamera,vTarget,vUp);
-	mat4x4 matView = Matrix_QuickInverse(matCamera);
+	M4x4D matCamera = Matrix_PointAt(vCamera,vTarget,vUp);
+	M4x4D matView = Matrix_QuickInverse(matCamera);
 	
-	Vector vecTrianglesToRaster = Vector_New(sizeof(triangle));
+	Vector vecTrianglesToRaster = Vector_New(sizeof(Tri3D));
 	for(int i = 0;i<meshCube.tris.size;i++){
-		triangle tri = *(triangle*)Vector_Get(&meshCube.tris,i);
+		Tri3D tri = *(Tri3D*)Vector_Get(&meshCube.tris,i);
 
-		triangle triTransformed;
+		Tri3D triTransformed;
 		triTransformed.p[0] = Matrix_MultiplyVector(matWorld, tri.p[0]);
 		triTransformed.p[1] = Matrix_MultiplyVector(matWorld, tri.p[1]);
 		triTransformed.p[2] = Matrix_MultiplyVector(matWorld, tri.p[2]);
@@ -314,24 +314,24 @@ void Update(AlxWindow* w){
 		triTransformed.t[1] = tri.t[1];
 		triTransformed.t[2] = tri.t[2];
 		
-		vec3d normal, line1, line2;
-		line1 = vec3d_Sub(triTransformed.p[1], triTransformed.p[0]);
-		line2 = vec3d_Sub(triTransformed.p[2], triTransformed.p[0]);
-		normal = vec3d_CrossProduct(line1, line2);
-		normal = vec3d_Normalise(normal);
+		Vec3D normal, line1, line2;
+		line1 = Vec3D_Sub(triTransformed.p[1], triTransformed.p[0]);
+		line2 = Vec3D_Sub(triTransformed.p[2], triTransformed.p[0]);
+		normal = Vec3D_CrossProduct(line1, line2);
+		normal = Vec3D_Normalise(normal);
 		
-		vec3d vCameraRay = vec3d_Sub(triTransformed.p[0], vCamera);
-		if (vec3d_DotProduct(normal, vCameraRay) < 0.0f){
-			vec3d light_direction = vec3d_Make(0.0f,1.0f,-1.0f);
-			light_direction = vec3d_Normalise(light_direction);
+		Vec3D vCameraRay = Vec3D_Sub(triTransformed.p[0], vCamera);
+		if (Vec3D_DotProduct(normal, vCameraRay) < 0.0f){
+			Vec3D light_direction = Vec3D_Make(0.0f,1.0f,-1.0f);
+			light_direction = Vec3D_Normalise(light_direction);
 			
-			float dp = float_max(0.1f,vec3d_DotProduct(light_direction,normal));
+			float dp = float_max(0.1f,Vec3D_DotProduct(light_direction,normal));
 			
 			Pixel c = Pixel_toRGBA(dp,dp,dp,1.0f);
 			triTransformed.c = c;
 			triTransformed.id = tri.id;
 
-			triangle triViewed;
+			Tri3D triViewed;
 			triViewed.p[0] = Matrix_MultiplyVector(matView,triTransformed.p[0]);
 			triViewed.p[1] = Matrix_MultiplyVector(matView,triTransformed.p[1]);
 			triViewed.p[2] = Matrix_MultiplyVector(matView,triTransformed.p[2]);
@@ -343,11 +343,11 @@ void Update(AlxWindow* w){
 			
 			
 			int nClippedTriangles = 0;
-			triangle clipped[2];
-			nClippedTriangles = Triangle_ClipAgainstPlane(vec3d_Make(0.0f,0.0f,0.1f),vec3d_Make(0.0f,0.0f,1.0f),&triViewed,&clipped[0],&clipped[1]);
+			Tri3D clipped[2];
+			nClippedTriangles = Triangle_ClipAgainstPlane(Vec3D_Make(0.0f,0.0f,0.1f),Vec3D_Make(0.0f,0.0f,1.0f),&triViewed,&clipped[0],&clipped[1]);
 			
 			for (int n = 0; n < nClippedTriangles; n++){
-				triangle triProjected;
+				Tri3D triProjected;
 				triProjected.p[0] = Matrix_MultiplyVector(matProj,clipped[n].p[0]);
 				triProjected.p[1] = Matrix_MultiplyVector(matProj,clipped[n].p[1]);
 				triProjected.p[2] = Matrix_MultiplyVector(matProj,clipped[n].p[2]);
@@ -367,9 +367,9 @@ void Update(AlxWindow* w){
 				triProjected.t[1].w = 1.0f / triProjected.p[1].w;
 				triProjected.t[2].w = 1.0f / triProjected.p[2].w;
 				
-				triProjected.p[0] = vec3d_Div(triProjected.p[0],triProjected.p[0].w);
-				triProjected.p[1] = vec3d_Div(triProjected.p[1],triProjected.p[1].w);
-				triProjected.p[2] = vec3d_Div(triProjected.p[2],triProjected.p[2].w);
+				triProjected.p[0] = Vec3D_Div(triProjected.p[0],triProjected.p[0].w);
+				triProjected.p[1] = Vec3D_Div(triProjected.p[1],triProjected.p[1].w);
+				triProjected.p[2] = Vec3D_Div(triProjected.p[2],triProjected.p[2].w);
 				
 				triProjected.p[0].x *= -1.0f;
 				triProjected.p[1].x *= -1.0f;
@@ -378,10 +378,10 @@ void Update(AlxWindow* w){
 				triProjected.p[1].y *= -1.0f;
 				triProjected.p[2].y *= -1.0f;
 				
-				vec3d vOffsetView = vec3d_Make(1.0f,1.0f,0.0f);
-				triProjected.p[0] = vec3d_Add(triProjected.p[0],vOffsetView);
-				triProjected.p[1] = vec3d_Add(triProjected.p[1],vOffsetView);
-				triProjected.p[2] = vec3d_Add(triProjected.p[2],vOffsetView);
+				Vec3D vOffsetView = Vec3D_Make(1.0f,1.0f,0.0f);
+				triProjected.p[0] = Vec3D_Add(triProjected.p[0],vOffsetView);
+				triProjected.p[1] = Vec3D_Add(triProjected.p[1],vOffsetView);
+				triProjected.p[2] = Vec3D_Add(triProjected.p[2],vOffsetView);
 				triProjected.p[0].x *= 0.5f * (float)GetWidth();
 				triProjected.p[0].y *= 0.5f * (float)GetHeight();
 				triProjected.p[1].x *= 0.5f * (float)GetWidth();
@@ -398,26 +398,26 @@ void Update(AlxWindow* w){
 	memset(pDepthBuffer,0,sizeof(float) * GetWidth() * GetHeight());
 		
 	for(int i = 0;i<vecTrianglesToRaster.size;i++){
-		triangle triToRaster = *(triangle*)Vector_Get(&vecTrianglesToRaster,i);
+		Tri3D triToRaster = *(Tri3D*)Vector_Get(&vecTrianglesToRaster,i);
 		
-		triangle clipped[2];
-		Vector listTriangles = Vector_New(sizeof(triangle));
+		Tri3D clipped[2];
+		Vector listTriangles = Vector_New(sizeof(Tri3D));
 		
 		Vector_Push(&listTriangles,&triToRaster);
 		int nNewTriangles = 1;
 		for (int p = 0; p < 4; p++){
 			int nTrisToAdd = 0;
 			while (nNewTriangles > 0){
-				triangle test = *(triangle*)Vector_Get(&listTriangles,0);
+				Tri3D test = *(Tri3D*)Vector_Get(&listTriangles,0);
 				Vector_Remove(&listTriangles,0);
 				nNewTriangles--;
 				
 				switch (p)
 				{
-				case 0:	nTrisToAdd = Triangle_ClipAgainstPlane((vec3d){ 0.0f, 0.0f, 0.0f }, 					(vec3d){ 0.0f, 1.0f, 0.0f },&test,&clipped[0],&clipped[1]); break;
-				case 1:	nTrisToAdd = Triangle_ClipAgainstPlane((vec3d){ 0.0f, (float)GetHeight() - 1, 0.0f }, 	(vec3d){ 0.0f,-1.0f, 0.0f },&test,&clipped[0],&clipped[1]); break;
-				case 2:	nTrisToAdd = Triangle_ClipAgainstPlane((vec3d){ 0.0f, 0.0f, 0.0f }, 					(vec3d){ 1.0f, 0.0f, 0.0f },&test,&clipped[0],&clipped[1]); break;
-				case 3:	nTrisToAdd = Triangle_ClipAgainstPlane((vec3d){ (float)GetWidth() - 1, 0.0f, 0.0f }, 	(vec3d){-1.0f, 0.0f, 0.0f },&test,&clipped[0],&clipped[1]); break;
+				case 0:	nTrisToAdd = Triangle_ClipAgainstPlane((Vec3D){ 0.0f, 0.0f, 0.0f }, 					(Vec3D){ 0.0f, 1.0f, 0.0f },&test,&clipped[0],&clipped[1]); break;
+				case 1:	nTrisToAdd = Triangle_ClipAgainstPlane((Vec3D){ 0.0f, (float)GetHeight() - 1, 0.0f }, 	(Vec3D){ 0.0f,-1.0f, 0.0f },&test,&clipped[0],&clipped[1]); break;
+				case 2:	nTrisToAdd = Triangle_ClipAgainstPlane((Vec3D){ 0.0f, 0.0f, 0.0f }, 					(Vec3D){ 1.0f, 0.0f, 0.0f },&test,&clipped[0],&clipped[1]); break;
+				case 3:	nTrisToAdd = Triangle_ClipAgainstPlane((Vec3D){ (float)GetWidth() - 1, 0.0f, 0.0f }, 	(Vec3D){-1.0f, 0.0f, 0.0f },&test,&clipped[0],&clipped[1]); break;
 				}
 				
 				for (int w = 0; w < nTrisToAdd; w++)
@@ -427,7 +427,7 @@ void Update(AlxWindow* w){
 		}
 		
 		for (int i = 0;i<listTriangles.size;i++){
-			triangle t = *(triangle*)Vector_Get(&listTriangles,i);
+			Tri3D t = *(Tri3D*)Vector_Get(&listTriangles,i);
 			
 			TexturedTriangle(
 				t.p[0].x, t.p[0].y, t.t[0].u, t.t[0].v, t.t[0].w,
